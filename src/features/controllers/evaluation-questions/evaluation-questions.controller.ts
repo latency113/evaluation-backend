@@ -1,7 +1,6 @@
 import { CreateEvaluationQuestionSchema, UpdateEvaluationQuestionSchema } from "@/features/services/evaluation-questions/evaluation-questions.schema.js";
 import { EvaluationQuestionService } from "@/features/services/evaluation-questions/evaluation-questions.service.js";
 import { Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace EvaluationQuestionController {
   export const getAllQuestionsHandler = async (req: Request, res: Response) => {
@@ -59,7 +58,7 @@ export namespace EvaluationQuestionController {
         .status(201)
         .json({ message: "Evaluation question created successfully", data: question });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating evaluation question:", error);
@@ -82,7 +81,7 @@ export namespace EvaluationQuestionController {
         .status(200)
         .json({ message: "Evaluation question updated successfully", data: question });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating evaluation question:", error);

@@ -1,7 +1,6 @@
 import { CreateCourseAssignmentSchema, UpdateCourseAssignmentSchema } from "@/features/services/course-assignments/course-assignments.schema.js";
 import { CourseAssignmentService } from "@/features/services/course-assignments/course-assignments.service.js";
 import { Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace CourseAssignmentController {
   export const getAllAssignmentsHandler = async (req: Request, res: Response) => {
@@ -59,7 +58,7 @@ export namespace CourseAssignmentController {
         .status(201)
         .json({ message: "Course assignment created successfully", data: assignment });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating course assignment:", error);
@@ -82,7 +81,7 @@ export namespace CourseAssignmentController {
         .status(200)
         .json({ message: "Course assignment updated successfully", data: assignment });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating course assignment:", error);

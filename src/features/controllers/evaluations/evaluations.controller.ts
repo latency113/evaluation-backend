@@ -1,7 +1,6 @@
 import { CreateEvaluationSchema, UpdateEvaluationSchema } from "@/features/services/evaluations/evaluations.schema.js";
 import { EvaluationService } from "@/features/services/evaluations/evaluations.service.js";
 import { Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace EvaluationController {
   export const getAllEvaluationsHandler = async (req: Request, res: Response) => {
@@ -59,7 +58,7 @@ export namespace EvaluationController {
         .status(201)
         .json({ message: "Evaluation created successfully", data: evaluation });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating evaluation:", error);
@@ -82,7 +81,7 @@ export namespace EvaluationController {
         .status(200)
         .json({ message: "Evaluation updated successfully", data: evaluation });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating evaluation:", error);

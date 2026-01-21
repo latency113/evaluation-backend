@@ -2,7 +2,6 @@ import { CreateTeacherSchema, UpdateTeacherSchema } from "@/features/services/te
 import { TeacherService } from "@/features/services/teachers/teachers.service.js";
 import { teacherRepository } from "@/features/repositories/teachers/teachers.repository.js";
 import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace TeacherController {
   export const getAllTeachersHandler = async (req: Request, res: Response, next: NextFunction) => {

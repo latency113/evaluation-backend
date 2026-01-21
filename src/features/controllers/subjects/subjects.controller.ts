@@ -1,7 +1,6 @@
 import { CreateSubjectSchema, UpdateSubjectSchema } from "@/features/services/subjects/subjects.schema.js";
 import { SubjectService } from "@/features/services/subjects/subjects.service.js";
 import { Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace SubjectController {
   export const getAllSubjectsHandler = async (req: Request, res: Response) => {
@@ -59,7 +58,7 @@ export namespace SubjectController {
         .status(201)
         .json({ message: "Subject created successfully", data: subject });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating subject:", error);
@@ -82,7 +81,7 @@ export namespace SubjectController {
         .status(200)
         .json({ message: "Subject updated successfully", data: subject });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating subject:", error);

@@ -1,7 +1,6 @@
 import { CreateUserSchema, UpdateUserSchema } from "@/features/services/users/users.schema.js";
 import { UserService } from "@/features/services/users/users.service.js";
 import { Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace UserController {
   export const getAllUsersHandler = async (req: Request, res: Response) => {
@@ -59,7 +58,7 @@ export namespace UserController {
         .status(201)
         .json({ message: "User created successfully", data: user });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating user:", error);
@@ -82,7 +81,7 @@ export namespace UserController {
         .status(200)
         .json({ message: "User updated successfully", data: user });
     } catch (error: any) {
-      if (error instanceof ZodError) {
+      if (error) {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating user:", error);

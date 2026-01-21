@@ -2,7 +2,6 @@ import { CreateLevelSchema, UpdateLevelSchema } from "@/features/services/levels
 import { LevelService } from "@/features/services/levels/levels.service.js";
 import { levelRepository } from "@/features/repositories/levels/levels.repository.js";
 import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace LevelController {
   export const getAllLevelsHandler = async (req: Request, res: Response, next: NextFunction) => {

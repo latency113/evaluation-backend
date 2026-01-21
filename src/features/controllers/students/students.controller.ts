@@ -1,7 +1,6 @@
 import { CreateStudentSchema, UpdateStudentSchema } from "@/features/services/students/students.schema.js";
 import { StudentService } from "@/features/services/students/students.service.js";
 import { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
 
 export namespace StudentController {
   export const getAllStudentsHandler = async (req: Request, res: Response, next: NextFunction) => {

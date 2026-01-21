@@ -1,7 +1,6 @@
 import { CreateDepartmentSchema, UpdateDepartmentSchema } from "@/features/services/departments/departments.schema.js";
 import { DepartmentService } from "@/features/services/departments/departments.service.js";
 import { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
 
 export namespace DepartmentController {
   export const getAllDepartmentsHandler = async (req: Request, res: Response, next: NextFunction) => {
