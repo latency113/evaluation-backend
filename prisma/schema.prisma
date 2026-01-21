@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/providers/database/generated"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  teacher
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) @map("user_id")
+  username  String   @unique @db.VarChar(50)
+  password  String   @db.VarChar(255)
+  role      Role     @default(teacher)
+  ref_id    Int?
+  is_active Boolean  @default(true) @db.TinyInt
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@map("Users")
+}
+
+model Department {
+  id        Int     @id @default(autoincrement()) @map("dept_id")
+  dept_name String  @db.VarChar(100)
+  levels    Level[]
+
+  @@map("Departments")
+}
+
+model Level {
+  id         Int         @id @default(autoincrement()) @map("level_id")
+  level_name String      @db.VarChar(50)
+  dept_id    Int?
+  department Department? @relation(fields: [dept_id], references: [id], onDelete: Cascade)
+  classrooms Classroom[]
+
+  @@map("Levels")
+}
+
+model Classroom {
+  id          Int                @id @default(autoincrement()) @map("classroom_id")
+  room_name   String             @db.VarChar(20)
+  level_id    Int?
+  level       Level?             @relation(fields: [level_id], references: [id], onDelete: Cascade)
+  students    Student[]
+  assignments CourseAssignment[]
+
+  @@map("Classrooms")
+}
+
+model Teacher {
+  id          Int                @id @default(autoincrement()) @map("teacher_id")
+  first_name  String             @db.VarChar(100)
+  last_name   String             @db.VarChar(100)
+  assignments CourseAssignment[]
+
+  @@map("Teachers")
+}
+
+model Subject {
+  id           Int                @id @default(autoincrement()) @map("subject_id")
+  subject_code String             @unique @db.VarChar(10)
+  subject_name String             @db.VarChar(100)
+  assignments  CourseAssignment[]
+
+  @@map("Subjects")
+}
+
+model CourseAssignment {
+  id           Int          @id @default(autoincrement()) @map("assignment_id")
+  teacher_id   Int?
+  teacher      Teacher?     @relation(fields: [teacher_id], references: [id], onDelete: Cascade)
+  subject_id   Int?
+  subject      Subject?     @relation(fields: [subject_id], references: [id], onDelete: Cascade)
+  classroom_id Int?
+  classroom    Classroom?   @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
+  term         String       @db.VarChar(10)
+  evaluations  Evaluation[]
+
+  @@map("CourseAssignments")
+}
+
+model Student {
+  id           Int          @id @default(autoincrement()) @map("student_id")
+  student_code String       @unique @db.VarChar(20)
+  first_name   String       @db.VarChar(100)
+  last_name    String       @db.VarChar(100)
+  classroom_id Int?
+  classroom    Classroom?   @relation(fields: [classroom_id], references: [id], onDelete: SetNull)
+  evaluations  Evaluation[]
+
+  @@map("Students")
+}
+
+model Evaluation {
+  id            Int                @id @default(autoincrement()) @map("eval_id")
+  assignment_id Int?
+  assignment    CourseAssignment?  @relation(fields: [assignment_id], references: [id], onDelete: Cascade)
+  student_id    Int?
+  student       Student?           @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  suggestion    String?            @db.Text
+  eval_date     DateTime           @default(now()) @map("eval_date") @db.Timestamp(0)
+  answers       EvaluationAnswer[]
+
+  @@unique([assignment_id, student_id], name: "unique_evaluation")
+  @@map("Evaluations")
+}
+
+model EvaluationQuestion {
+  id            Int                @id @default(autoincrement()) @map("question_id")
+  question_text String             @db.Text
+  answers       EvaluationAnswer[]
+
+  @@map("EvaluationQuestions")
+}
+
+model EvaluationAnswer {
+  id          Int                 @id @default(autoincrement()) @map("answer_id")
+  eval_id     Int?
+  evaluation  Evaluation?         @relation(fields: [eval_id], references: [id], onDelete: Cascade)
+  question_id Int?
+  question    EvaluationQuestion? @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  score       Int
+
+  @@map("EvaluationAnswers")
+}
