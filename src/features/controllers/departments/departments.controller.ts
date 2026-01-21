@@ -49,7 +49,7 @@ export namespace DepartmentController {
         if (!name) {
             return res.status(400).json({ message: "Department name is required" });
         }
-        const department = await departmentRepository.getDepartmentByName(name);
+        const department = await DepartmentService.getDepartmentByName(name);
         if (!department) {
             return res.status(404).json({ message: "Department not found" });
         }

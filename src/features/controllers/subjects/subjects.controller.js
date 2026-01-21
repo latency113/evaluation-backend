@@ -1,0 +1,113 @@
+import { CreateSubjectSchema, UpdateSubjectSchema } from "@/features/services/subjects/subjects.schema";
+import { SubjectService } from "@/features/services/subjects/subjects.service";
+import { ZodError } from "zod";
+export var SubjectController;
+(function (SubjectController) {
+    SubjectController.getAllSubjectsHandler = async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const result = await SubjectService.getAllSubjects(page, limit);
+            res
+                .status(200)
+                .json({
+                message: "Subjects retrieved successfully",
+                data: result.subjects,
+                meta: {
+                    total: result.total,
+                    page: result.page,
+                    limit: result.limit,
+                    totalPages: result.totalPages
+                }
+            });
+        }
+        catch (error) {
+            console.error("Error retrieving subjects:", error);
+            res.status(500).json({
+                message: "Error retrieving subjects",
+                error: error instanceof Error ? { message: error.message } : error
+            });
+        }
+    };
+    SubjectController.getSubjectByIdHandler = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                return res.status(400).json({ message: "Invalid subject ID" });
+            }
+            const subject = await SubjectService.getSubjectById(id);
+            if (!subject) {
+                return res.status(404).json({ message: "Subject not found" });
+            }
+            res.status(200).json({ message: "Subject retrieved successfully", data: subject });
+        }
+        catch (error) {
+            console.error("Error retrieving subject:", error);
+            res.status(500).json({
+                message: "Error retrieving subject",
+                error: error instanceof Error ? { message: error.message } : error
+            });
+        }
+    };
+    SubjectController.createSubjectHandler = async (req, res) => {
+        try {
+            const parsedData = CreateSubjectSchema.parse(req.body);
+            const subject = await SubjectService.createSubject(parsedData);
+            res
+                .status(201)
+                .json({ message: "Subject created successfully", data: subject });
+        }
+        catch (error) {
+            if (error instanceof ZodError) {
+                return res.status(400).json({ message: "Validation error", errors: error });
+            }
+            console.error("Error creating subject:", error);
+            res.status(500).json({
+                message: "Error creating subject",
+                error: error instanceof Error ? { message: error.message } : error
+            });
+        }
+    };
+    SubjectController.updateSubjectHandler = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                return res.status(400).json({ message: "Invalid subject ID" });
+            }
+            const parsedData = UpdateSubjectSchema.parse(req.body);
+            const subject = await SubjectService.updateSubject(id, parsedData);
+            res
+                .status(200)
+                .json({ message: "Subject updated successfully", data: subject });
+        }
+        catch (error) {
+            if (error instanceof ZodError) {
+                return res.status(400).json({ message: "Validation error", errors: error });
+            }
+            console.error("Error updating subject:", error);
+            res.status(500).json({
+                message: "Error updating subject",
+                error: error instanceof Error ? { message: error.message } : error
+            });
+        }
+    };
+    SubjectController.deleteSubjectHandler = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) {
+                return res.status(400).json({ message: "Invalid subject ID" });
+            }
+            const subject = await SubjectService.deleteSubject(id);
+            res
+                .status(200)
+                .json({ message: "Subject deleted successfully", data: subject });
+        }
+        catch (error) {
+            console.error("Error deleting subject:", error);
+            res.status(500).json({
+                message: "Error deleting subject",
+                error: error instanceof Error ? { message: error.message } : error
+            });
+        }
+    };
+})(SubjectController || (SubjectController = {}));

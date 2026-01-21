@@ -1,13 +1,12 @@
 import { departmentRepository } from "../../repositories/departments/departments.repository";
-import { UpdateDepartmentInput, CreateDepartmentInput, departmentSchema } from "./departments.schema";
-
-export namespace DepartmentService {
-    export const getAllDepartments = async (page: number = 1, limit: number = 10) => {
+import { departmentSchema } from "./departments.schema";
+export var DepartmentService;
+(function (DepartmentService) {
+    DepartmentService.getAllDepartments = async (page = 1, limit = 10) => {
         const [departments, total] = await Promise.all([
             departmentRepository.getAllDepartments(page, limit),
             departmentRepository.countDepartments()
         ]);
-
         return {
             departments: departments.map(dept => departmentSchema.parse(dept)),
             total,
@@ -15,32 +14,23 @@ export namespace DepartmentService {
             limit,
             totalPages: Math.ceil(total / limit)
         };
-    }
-
-    export const getDepartmentById = async (id: number) => {
+    };
+    DepartmentService.getDepartmentById = async (id) => {
         const department = await departmentRepository.getDepartmentById(id);
-        if (!department) return null;
+        if (!department)
+            return null;
         return departmentSchema.parse(department);
-    }
-
-    export const getDepartmentByName = async (name: string) => {
-        const department = await departmentRepository.getDepartmentByName(name);
-        if (!department) return null;
-        return departmentSchema.parse(department);
-    }
-
-    export const createDepartment = async (data: CreateDepartmentInput) => {
+    };
+    DepartmentService.createDepartment = async (data) => {
         const newDepartment = await departmentRepository.createDepartment(data);
         return departmentSchema.parse(newDepartment);
-    }
-
-    export const updateDepartment = async (id: number, data: UpdateDepartmentInput) => {
+    };
+    DepartmentService.updateDepartment = async (id, data) => {
         const updatedDepartment = await departmentRepository.updateDepartment(id, data);
         return departmentSchema.parse(updatedDepartment);
-    }
-
-    export const deleteDepartment = async (id: number) => {
+    };
+    DepartmentService.deleteDepartment = async (id) => {
         const deletedDepartment = await departmentRepository.deleteDepartment(id);
         return departmentSchema.parse(deletedDepartment);
-    }
-}
+    };
+})(DepartmentService || (DepartmentService = {}));
