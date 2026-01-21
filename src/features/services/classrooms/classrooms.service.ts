@@ -1,5 +1,5 @@
-import { classroomRepository } from "../../repositories/classrooms/classrooms.repository";
-import { UpdateClassroomInput, CreateClassroomInput, classroomSchema } from "./classrooms.schema";
+import { classroomRepository } from "../../repositories/classrooms/classrooms.repository.js";
+import { UpdateClassroomInput, CreateClassroomInput, classroomSchema } from "./classrooms.schema.js";
 import ExcelJS from 'exceljs';
 
 export namespace ClassroomService {

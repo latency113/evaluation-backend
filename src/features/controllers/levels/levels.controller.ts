@@ -1,6 +1,6 @@
-import { CreateLevelSchema, UpdateLevelSchema } from "@/features/services/levels/levels.schema";
-import { LevelService } from "@/features/services/levels/levels.service";
-import { levelRepository } from "@/features/repositories/levels/levels.repository";
+import { CreateLevelSchema, UpdateLevelSchema } from "@/features/services/levels/levels.schema.js";
+import { LevelService } from "@/features/services/levels/levels.service.js";
+import { levelRepository } from "@/features/repositories/levels/levels.repository.js";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 

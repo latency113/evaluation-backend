@@ -1,5 +1,5 @@
-import { subjectRepository } from "../../repositories/subjects/subjects.repository";
-import { UpdateSubjectInput, CreateSubjectInput, subjectSchema } from "./subjects.schema";
+import { subjectRepository } from "../../repositories/subjects/subjects.repository.js";
+import { UpdateSubjectInput, CreateSubjectInput, subjectSchema } from "./subjects.schema.js";
 
 export namespace SubjectService {
     export const getAllSubjects = async (page: number = 1, limit: number = 10) => {

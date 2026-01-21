@@ -1,5 +1,5 @@
-import { levelRepository } from "../../repositories/levels/levels.repository";
-import { UpdateLevelInput, CreateLevelInput, levelSchema } from "./levels.schema";
+import { levelRepository } from "../../repositories/levels/levels.repository.js";
+import { UpdateLevelInput, CreateLevelInput, levelSchema } from "./levels.schema.js";
 
 export namespace LevelService {
     export const getAllLevels = async (page: number = 1, limit: number = 10) => {

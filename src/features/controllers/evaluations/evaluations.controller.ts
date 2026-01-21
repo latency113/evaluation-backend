@@ -1,5 +1,5 @@
-import { CreateEvaluationSchema, UpdateEvaluationSchema } from "@/features/services/evaluations/evaluations.schema";
-import { EvaluationService } from "@/features/services/evaluations/evaluations.service";
+import { CreateEvaluationSchema, UpdateEvaluationSchema } from "@/features/services/evaluations/evaluations.schema.js";
+import { EvaluationService } from "@/features/services/evaluations/evaluations.service.js";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 

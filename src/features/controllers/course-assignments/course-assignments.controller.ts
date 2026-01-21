@@ -1,5 +1,5 @@
-import { CreateCourseAssignmentSchema, UpdateCourseAssignmentSchema } from "@/features/services/course-assignments/course-assignments.schema";
-import { CourseAssignmentService } from "@/features/services/course-assignments/course-assignments.service";
+import { CreateCourseAssignmentSchema, UpdateCourseAssignmentSchema } from "@/features/services/course-assignments/course-assignments.schema.js";
+import { CourseAssignmentService } from "@/features/services/course-assignments/course-assignments.service.js";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 

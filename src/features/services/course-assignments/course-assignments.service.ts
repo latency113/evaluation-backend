@@ -1,5 +1,5 @@
-import { courseAssignmentRepository } from "../../repositories/course-assignments/course-assignments.repository";
-import { UpdateCourseAssignmentInput, CreateCourseAssignmentInput, courseAssignmentSchema } from "./course-assignments.schema";
+import { courseAssignmentRepository } from "../../repositories/course-assignments/course-assignments.repository.js";
+import { UpdateCourseAssignmentInput, CreateCourseAssignmentInput, courseAssignmentSchema } from "./course-assignments.schema.js";
 
 export namespace CourseAssignmentService {
     export const getAllAssignments = async (page: number = 1, limit: number = 10) => {

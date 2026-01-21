@@ -1,4 +1,4 @@
-import prisma from "@/providers/database/database.provider";
+import prisma from "@/providers/database/database.provider.js";
 
 export namespace studentRepository {
     export const getAllStudents = async (page: number = 1, limit: number = 10, search: string = "", classroomId?: number) => {

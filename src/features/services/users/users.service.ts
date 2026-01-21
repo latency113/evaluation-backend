@@ -1,7 +1,7 @@
-import { userRepository } from "../../repositories/users/users.repository";
-import { UpdateUserInput, CreateUserInput, userSchema } from "./users.schema";
+import { userRepository } from "../../repositories/users/users.repository.js";
+import { UpdateUserInput, CreateUserInput, userSchema } from "./users.schema.js";
 import bcrypt from "bcrypt";
-import { Role } from "@/providers/database/generated/enums";
+import { Role } from "@/providers/database/generated/enums.js";
 
 export namespace UserService {
     export const getAllUsers = async (page: number = 1, limit: number = 10) => {

@@ -1,6 +1,6 @@
-import { CreateTeacherSchema, UpdateTeacherSchema } from "@/features/services/teachers/teachers.schema";
-import { TeacherService } from "@/features/services/teachers/teachers.service";
-import { teacherRepository } from "@/features/repositories/teachers/teachers.repository";
+import { CreateTeacherSchema, UpdateTeacherSchema } from "@/features/services/teachers/teachers.schema.js";
+import { TeacherService } from "@/features/services/teachers/teachers.service.js";
+import { teacherRepository } from "@/features/repositories/teachers/teachers.repository.js";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 

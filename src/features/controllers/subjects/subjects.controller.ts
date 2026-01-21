@@ -1,5 +1,5 @@
-import { CreateSubjectSchema, UpdateSubjectSchema } from "@/features/services/subjects/subjects.schema";
-import { SubjectService } from "@/features/services/subjects/subjects.service";
+import { CreateSubjectSchema, UpdateSubjectSchema } from "@/features/services/subjects/subjects.schema.js";
+import { SubjectService } from "@/features/services/subjects/subjects.service.js";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 

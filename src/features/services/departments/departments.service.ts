@@ -1,5 +1,5 @@
-import { departmentRepository } from "../../repositories/departments/departments.repository";
-import { UpdateDepartmentInput, CreateDepartmentInput, departmentSchema } from "./departments.schema";
+import { departmentRepository } from "../../repositories/departments/departments.repository.js";
+import { UpdateDepartmentInput, CreateDepartmentInput, departmentSchema } from "./departments.schema.js";
 
 export namespace DepartmentService {
     export const getAllDepartments = async (page: number = 1, limit: number = 10) => {

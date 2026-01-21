@@ -1,5 +1,5 @@
-import { CreateStudentSchema, UpdateStudentSchema } from "@/features/services/students/students.schema";
-import { StudentService } from "@/features/services/students/students.service";
+import { CreateStudentSchema, UpdateStudentSchema } from "@/features/services/students/students.schema.js";
+import { StudentService } from "@/features/services/students/students.service.js";
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 

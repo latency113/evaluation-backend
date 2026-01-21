@@ -1,6 +1,6 @@
-import { CreateClassroomSchema, UpdateClassroomSchema } from "@/features/services/classrooms/classrooms.schema";
-import { ClassroomService } from "@/features/services/classrooms/classrooms.service";
-import { classroomRepository } from "@/features/repositories/classrooms/classrooms.repository";
+import { CreateClassroomSchema, UpdateClassroomSchema } from "@/features/services/classrooms/classrooms.schema.js";
+import { ClassroomService } from "@/features/services/classrooms/classrooms.service.js";
+import { classroomRepository } from "@/features/repositories/classrooms/classrooms.repository.js";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 

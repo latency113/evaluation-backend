@@ -1,5 +1,5 @@
-import { evaluationRepository } from "../../repositories/evaluations/evaluations.repository";
-import { UpdateEvaluationInput, CreateEvaluationInput, evaluationSchema } from "./evaluations.schema";
+import { evaluationRepository } from "../../repositories/evaluations/evaluations.repository.js";
+import { UpdateEvaluationInput, CreateEvaluationInput, evaluationSchema } from "./evaluations.schema.js";
 
 export namespace EvaluationService {
     export const getAllEvaluations = async (page: number = 1, limit: number = 10) => {

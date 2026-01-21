@@ -1,5 +1,5 @@
-import { CreateUserSchema, UpdateUserSchema } from "@/features/services/users/users.schema";
-import { UserService } from "@/features/services/users/users.service";
+import { CreateUserSchema, UpdateUserSchema } from "@/features/services/users/users.schema.js";
+import { UserService } from "@/features/services/users/users.service.js";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 

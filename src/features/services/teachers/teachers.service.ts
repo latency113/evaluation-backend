@@ -1,5 +1,5 @@
-import { teacherRepository } from "../../repositories/teachers/teachers.repository";
-import { UpdateTeacherInput, CreateTeacherInput, teacherSchema } from "./teachers.schema";
+import { teacherRepository } from "../../repositories/teachers/teachers.repository.js";
+import { UpdateTeacherInput, CreateTeacherInput, teacherSchema } from "./teachers.schema.js";
 
 export namespace TeacherService {
     export const getAllTeachers = async (page: number = 1, limit: number = 10) => {

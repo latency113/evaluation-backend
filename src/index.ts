@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import express, { Request, Response } from "express";
 import cors from 'cors';
-import router from "./features/controllers";
-import { loggerMiddleware } from "./middlewares/logger.middleware";
-import { errorMiddleware } from "./middlewares/error.middleware";
+import router from "./features/controllers/index.js";
+import { loggerMiddleware } from "./middlewares/logger.middleware.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 const app = express();
 

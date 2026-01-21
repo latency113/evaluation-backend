@@ -1,5 +1,5 @@
-import prisma from "@/providers/database/database.provider";
-import { Role } from "@/providers/database/generated/enums";
+import prisma from "@/providers/database/database.provider.js";
+import { Role } from "@/providers/database/generated/enums.js";
 
 export namespace userRepository {
     export const getAllUsers = async (page: number = 1, limit: number = 10) => {

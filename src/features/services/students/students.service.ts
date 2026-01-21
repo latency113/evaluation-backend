@@ -1,5 +1,5 @@
-import { studentRepository } from "../../repositories/students/students.repository";
-import { UpdateStudentInput, CreateStudentInput, studentSchema } from "./students.schema";
+import { studentRepository } from "../../repositories/students/students.repository.js";
+import { UpdateStudentInput, CreateStudentInput, studentSchema } from "./students.schema.js";
 
 export namespace StudentService {
     export const getAllStudents = async (page: number = 1, limit: number = 10, search: string = "", classroomId?: number) => {

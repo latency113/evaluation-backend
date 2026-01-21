@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { UserController } from "./users/users.controller";
-import { DepartmentController } from "./departments/departments.controller";
-import { LevelController } from "./levels/levels.controller";
-import { ClassroomController } from "./classrooms/classrooms.controller";
-import { TeacherController } from "./teachers/teachers.controller";
-import { SubjectController } from "./subjects/subjects.controller";
-import { CourseAssignmentController } from "./course-assignments/course-assignments.controller";
-import { StudentController } from "./students/students.controller";
-import { EvaluationController } from "./evaluations/evaluations.controller";
-import { EvaluationQuestionController } from "./evaluation-questions/evaluation-questions.controller";
-import { EvaluationAnswerController } from "./evaluation-answers/evaluation-answers.controller";
+import { UserController } from "./users/users.controller.js";
+import { DepartmentController } from "./departments/departments.controller.js";
+import { LevelController } from "./levels/levels.controller.js";
+import { ClassroomController } from "./classrooms/classrooms.controller.js";
+import { TeacherController } from "./teachers/teachers.controller.js";
+import { SubjectController } from "./subjects/subjects.controller.js";
+import { CourseAssignmentController } from "./course-assignments/course-assignments.controller.js";
+import { StudentController } from "./students/students.controller.js";
+import { EvaluationController } from "./evaluations/evaluations.controller.js";
+import { EvaluationQuestionController } from "./evaluation-questions/evaluation-questions.controller.js";
+import { EvaluationAnswerController } from "./evaluation-answers/evaluation-answers.controller.js";
 import multer from 'multer';
 
 const upload = multer({ storage: multer.memoryStorage() });
