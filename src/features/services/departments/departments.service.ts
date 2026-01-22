@@ -17,6 +17,11 @@ export namespace DepartmentService {
         };
     }
 
+    export const getAllDepartmentsWithoutPagination = async () => {
+        const departments = await departmentRepository.getAllDepartmentsWithoutPagination();
+        return departments.map(dept => departmentSchema.parse(dept));
+    }
+
     export const getDepartmentById = async (id: number) => {
         const department = await departmentRepository.getDepartmentById(id);
         if (!department) return null;

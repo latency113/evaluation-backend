@@ -17,6 +17,11 @@ export namespace LevelService {
         };
     }
 
+    export const getAllLevelsWithoutPagination = async () => {
+        const levels = await levelRepository.getAllLevelsWithoutPagination();
+        return levels.map(level => levelSchema.parse(level));
+    }
+
     export const getLevelById = async (id: number) => {
         const level = await levelRepository.getLevelById(id);
         if (!level) return null;

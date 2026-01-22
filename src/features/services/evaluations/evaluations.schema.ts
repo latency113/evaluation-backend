@@ -18,11 +18,14 @@ export const evaluationSchema = z.object({
     }).nullable().optional(),
     assignment: z.object({
         id: z.number(),
+        teacher_id: z.number().nullable().optional(),
+        classroom_id: z.number().nullable().optional(),
         subject: z.object({
             subject_name: z.string(),
             subject_code: z.string(),
         }).nullable().optional(),
         teacher: z.object({
+            id: z.number(),
             first_name: z.string(),
             last_name: z.string(),
         }).nullable().optional(),
@@ -42,6 +45,7 @@ export const evaluationSchema = z.object({
         score: z.number(),
         question_id: z.number().nullable().optional(),
         question: z.object({
+            id: z.number(),
             question_text: z.string()
         }).nullable().optional(),
     })).nullable().optional(),

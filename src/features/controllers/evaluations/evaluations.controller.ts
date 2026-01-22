@@ -30,6 +30,24 @@ export namespace EvaluationController {
     }
   };
 
+  export const getAllEvaluationsWithoutPaginationHandler = async (req: Request, res: Response) => {
+    try {
+      const result = await EvaluationService.getAllEvaluationsWithoutPagination();
+      res
+        .status(200)
+        .json({ 
+          message: "All evaluations retrieved successfully", 
+          data: result
+        });
+    } catch (error: any) {
+      console.error("Error retrieving all evaluations:", error);
+      res.status(500).json({ 
+          message: "Error retrieving all evaluations", 
+          error: error instanceof Error ? { message: error.message } : error 
+      });
+    }
+  };
+
   export const getEvaluationByIdHandler = async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);

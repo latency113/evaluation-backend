@@ -27,6 +27,20 @@ export namespace LevelController {
     }
   };
 
+  export const getAllLevelsWithoutPaginationHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const levels = await LevelService.getAllLevelsWithoutPagination();
+      res
+        .status(200)
+        .json({ 
+          message: "All levels retrieved successfully", 
+          data: levels
+        });
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
   export const getLevelByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = parseInt(req.params.id);

@@ -10,6 +10,12 @@ export namespace departmentRepository {
         });
     }
 
+    export const getAllDepartmentsWithoutPagination = async () => {
+        return await prisma.department.findMany({
+            orderBy: { id: 'desc' }
+        });
+    }
+
     export const countDepartments = async () => {
         return await prisma.department.count();
     }

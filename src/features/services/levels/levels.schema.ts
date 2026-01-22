@@ -4,6 +4,10 @@ export const levelSchema = z.object({
     id: z.number(),
     level_name: z.string(),
     dept_id: z.number().nullable().optional(),
+    department: z.object({
+        id: z.number(),
+        dept_name: z.string(),
+    }).nullable().optional(),
 });
 
 export const CreateLevelSchema = levelSchema.omit({ id: true });

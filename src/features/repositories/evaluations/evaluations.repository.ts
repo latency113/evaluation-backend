@@ -37,6 +37,39 @@ export namespace evaluationRepository {
         });
     }
 
+    export const getAllEvaluationsWithoutPagination = async () => {
+        return await prisma.evaluation.findMany({
+            include: {
+                assignment: {
+                    include: {
+                        subject: true,
+                        teacher: true,
+                        classroom: {
+                            include: {
+                                level: {
+                                    include: {
+                                        department: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                student: {
+                    include: {
+                        classroom: true
+                    }
+                },
+                answers: {
+                    include: {
+                        question: true
+                    }
+                }
+            },
+            orderBy: { eval_date: 'desc' }
+        });
+    }
+
     export const countEvaluations = async () => {
         return await prisma.evaluation.count();
     }

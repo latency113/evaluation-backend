@@ -8,8 +8,10 @@ export namespace ClassroomController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string;
+      const deptId = req.query.deptId ? parseInt(req.query.deptId as string) : undefined;
 
-      const result = await ClassroomService.getAllClassrooms(page, limit);
+      const result = await ClassroomService.getAllClassrooms(page, limit, search, deptId);
       res
         .status(200)
         .json({ 

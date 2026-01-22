@@ -26,6 +26,20 @@ export namespace DepartmentController {
     }
   };
 
+  export const getAllDepartmentsWithoutPaginationHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const departments = await DepartmentService.getAllDepartmentsWithoutPagination();
+      res
+        .status(200)
+        .json({ 
+          message: "All departments retrieved successfully", 
+          data: departments
+        });
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
   export const getDepartmentByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = parseInt(req.params.id);

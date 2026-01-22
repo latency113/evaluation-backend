@@ -3,10 +3,10 @@ import { UpdateClassroomInput, CreateClassroomInput, classroomSchema } from "./c
 import ExcelJS from 'exceljs';
 
 export namespace ClassroomService {
-    export const getAllClassrooms = async (page: number = 1, limit: number = 10) => {
+    export const getAllClassrooms = async (page: number = 1, limit: number = 10, searchTerm?: string, deptId?: number) => {
         const [classrooms, total] = await Promise.all([
-            classroomRepository.getAllClassrooms(page, limit),
-            classroomRepository.countClassrooms()
+            classroomRepository.getAllClassrooms(page, limit, searchTerm, deptId),
+            classroomRepository.countClassrooms(searchTerm, deptId)
         ]);
 
         return {

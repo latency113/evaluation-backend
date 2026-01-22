@@ -6,7 +6,7 @@ export namespace teacherRepository {
         return await prisma.teacher.findMany({
             skip,
             take: limit,
-            orderBy: { id: 'desc' }
+            orderBy: { id: 'asc' }
         });
     }
 

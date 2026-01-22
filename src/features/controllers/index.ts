@@ -24,6 +24,7 @@ router.delete("/users/:id", UserController.deleteUserHandler);
 
 // Department routes
 router.get("/departments", DepartmentController.getAllDepartmentsHandler);
+router.get("/departments/all", DepartmentController.getAllDepartmentsWithoutPaginationHandler);
 router.get("/departments/search", DepartmentController.getDepartmentByNameHandler);
 router.get("/departments/:id", DepartmentController.getDepartmentByIdHandler);
 router.post("/departments", DepartmentController.createDepartmentHandler);
@@ -32,6 +33,7 @@ router.delete("/departments/:id", DepartmentController.deleteDepartmentHandler);
 
 // Level routes
 router.get("/levels", LevelController.getAllLevelsHandler);
+router.get("/levels/all", LevelController.getAllLevelsWithoutPaginationHandler);
 router.get("/levels/search", LevelController.getLevelByNameHandler);
 router.get("/levels/:id", LevelController.getLevelByIdHandler);
 router.post("/levels", LevelController.createLevelHandler);
@@ -78,6 +80,7 @@ router.delete("/students/:id", StudentController.deleteStudentHandler);
 
 // Evaluation routes
 router.get("/evaluations", EvaluationController.getAllEvaluationsHandler);
+router.get("/evaluations/all", EvaluationController.getAllEvaluationsWithoutPaginationHandler);
 router.get("/evaluations/:id", EvaluationController.getEvaluationByIdHandler);
 router.post("/evaluations", EvaluationController.createEvaluationHandler);
 router.put("/evaluations/:id", EvaluationController.updateEvaluationHandler);

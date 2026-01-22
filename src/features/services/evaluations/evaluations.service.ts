@@ -17,6 +17,11 @@ export namespace EvaluationService {
         };
     }
 
+    export const getAllEvaluationsWithoutPagination = async () => {
+        const evaluations = await evaluationRepository.getAllEvaluationsWithoutPagination();
+        return evaluations.map(evaluation => evaluationSchema.parse(evaluation));
+    }
+
     export const getEvaluationById = async (id: number) => {
         const evaluation = await evaluationRepository.getEvaluationById(id);
         if (!evaluation) return null;

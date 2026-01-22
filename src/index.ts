@@ -21,8 +21,9 @@ app.get("/", (req: Request, res: Response) => {
 // Error handling middleware should be last
 app.use(errorMiddleware);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const PORT = Number(process.env.PORT) || 3000;
+
+app.listen(PORT,'0.0.0.0',() => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 

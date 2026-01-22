@@ -5,11 +5,19 @@ export namespace levelRepository {
         const skip = (page - 1) * limit;
         return await prisma.level.findMany({
             skip,
-            take: limit,
+                            take: limit,
+                            include: {
+                                department: true
+                            },
+                            orderBy: { level_name: 'asc' }
+                        });
+                    }
+    export const getAllLevelsWithoutPagination = async () => {
+        return await prisma.level.findMany({
             include: {
                 department: true
             },
-            orderBy: { id: 'desc' }
+            orderBy: { level_name: 'asc' }
         });
     }
 
