@@ -35,6 +35,9 @@ export namespace classroomRepository {
             department: true,
           },
         },
+        _count: {
+          select: { students: true }
+        }
       },
             orderBy: [
                 { level: { department: { dept_name: 'asc' } } },
@@ -78,15 +81,35 @@ export namespace classroomRepository {
             department: true,
           },
         },
+        _count: {
+          select: { students: true }
+        }
       },
     });
   };
 
   export const getClassroomByName = async (name: string) => {
-    return await prisma.classroom.findFirst({
+    // 1. Try exact match
+    let classroom = await prisma.classroom.findFirst({
       where: {
         room_name: name,
       },
+      include: { level: true }
+    });
+
+    if (classroom) return classroom;
+
+    // 2. Try to find if the name is part of the room_name or level_name
+    const cleanName = name.replace(/^(ปวช\.|ปวส\.|ปวช|ปวส)\s*/, '').replace(/\s*(ปวช|ปวส)$/, '').trim();
+    
+    return await prisma.classroom.findFirst({
+        where: {
+            OR: [
+                { room_name: { contains: cleanName } },
+                { level: { level_name: { contains: cleanName } } }
+            ]
+        },
+        include: { level: true }
     });
   };
 
@@ -104,7 +127,7 @@ export namespace classroomRepository {
 
   export const updateClassroom = async (
     id: number,
-    data: { room_name?: string; level_id?: number | null },
+    data: { room_name?: string; level_id?: number | null; dept_id?: number | null },
   ) => {
     return await prisma.classroom.update({
       where: {
@@ -113,6 +136,7 @@ export namespace classroomRepository {
       data: {
         room_name: data.room_name,
         level_id: data.level_id,
+        dept_id: data.dept_id,
       },
     });
   };
@@ -172,7 +196,17 @@ export namespace classroomRepository {
       });
       if (!classroom) {
         classroom = await tx.classroom.create({
-          data: { room_name: data.roomName, level_id: level.id },
+          data: { 
+            room_name: data.roomName, 
+            level_id: level.id,
+            dept_id: dept.id // Link to department
+          },
+        });
+      } else if (!classroom.dept_id) {
+        // Update existing classroom if it doesn't have a dept_id
+        classroom = await tx.classroom.update({
+          where: { id: classroom.id },
+          data: { dept_id: dept.id }
         });
       }
 

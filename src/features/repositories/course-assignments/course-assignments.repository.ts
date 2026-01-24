@@ -1,9 +1,22 @@
 import prisma from "@/providers/database/database.provider.js";
 
 export namespace courseAssignmentRepository {
-    export const getAllAssignments = async (page: number = 1, limit: number = 10) => {
+    export const getAllAssignments = async (page: number = 1, limit: number = 10, searchTerm?: string) => {
         const skip = (page - 1) * limit;
+        const where = searchTerm ? {
+            OR: [
+                { teacher: { first_name: { contains: searchTerm } } },
+                { teacher: { last_name: { contains: searchTerm } } },
+                { subject: { subject_name: { contains: searchTerm } } },
+                { subject: { subject_code: { contains: searchTerm } } },
+                { classroom: { room_name: { contains: searchTerm } } },
+                { classroom: { level: { level_name: { contains: searchTerm } } } },
+                { classroom: { department: { dept_name: { contains: searchTerm } } } }
+            ]
+        } : {};
+
         return await prisma.courseAssignment.findMany({
+            where,
             skip,
             take: limit,
             include: {
@@ -11,7 +24,8 @@ export namespace courseAssignmentRepository {
                 subject: true,
                 classroom: {
                     include: {
-                        level: true
+                        level: true,
+                        department: true
                     }
                 }
             },
@@ -19,8 +33,19 @@ export namespace courseAssignmentRepository {
         });
     }
 
-    export const countAssignments = async () => {
-        return await prisma.courseAssignment.count();
+    export const countAssignments = async (searchTerm?: string) => {
+        const where = searchTerm ? {
+            OR: [
+                { teacher: { first_name: { contains: searchTerm } } },
+                { teacher: { last_name: { contains: searchTerm } } },
+                { subject: { subject_name: { contains: searchTerm } } },
+                { subject: { subject_code: { contains: searchTerm } } },
+                { classroom: { room_name: { contains: searchTerm } } },
+                { classroom: { level: { level_name: { contains: searchTerm } } } },
+                { classroom: { department: { dept_name: { contains: searchTerm } } } }
+            ]
+        } : {};
+        return await prisma.courseAssignment.count({ where });
     }
 
     export const getAssignmentById = async (id: number) => {
@@ -33,10 +58,11 @@ export namespace courseAssignmentRepository {
                 subject: true,
                 classroom: {
                     include: {
-                        level: true
+                        level: true,
+                        department: true
                     }
                 }
-            }
+            },
         });
     }
 

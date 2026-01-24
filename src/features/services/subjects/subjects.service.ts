@@ -54,57 +54,97 @@ export namespace SubjectService {
     const worksheet = workbook.getWorksheet(1);
     if (!worksheet) throw new Error("No worksheet found");
 
-    // 1. ดึงข้อมูลส่วนหัว (แผนก และ ระดับชั้น)
-    const departmentName = worksheet
-      .getRow(1)
-      .getCell(1)
-      .value?.toString()
-      .trim();
-    const levelName = worksheet.getRow(2).getCell(1).value?.toString().trim();
+    // 1. ดึงข้อมูลส่วนหัว (แผนก และ ระดับชั้น) โดยการค้นหา Keyword
+    let departmentName = "";
+    let levelName = "";
+
+    // ค้นหาใน 10 แถวแรก
+    for (let i = 1; i <= 10; i++) {
+      const row = worksheet.getRow(i);
+      row.eachCell((cell, colNumber) => {
+        const val = cell.value?.toString() || "";
+        
+        // Check for Department / Branch
+        if (val.includes("แผนกวิชา") || val.includes("แผนก") || val.includes("สาขาวิชา") || val.includes("สาขา")) {
+          const splitVal = val.split(/[:：]/)[1]?.trim();
+          const cleanVal = val.replace(/^(แผนกวิชา|แผนก|สาขาวิชา|สาขา)\s*[:：]?\s*/, "").trim();
+          const nextVal = row.getCell(colNumber + 1).value?.toString().trim();
+          
+          if (!departmentName) {
+            departmentName = splitVal || cleanVal || nextVal || "";
+          }
+        }
+        
+        // Check for Level
+        if (val.includes("ระดับชั้น") || val.includes("ชั้นปี") || val.includes("ห้อง")) {
+          const splitVal = val.split(/[:：]/)[1]?.trim();
+          const cleanVal = val.replace(/^(ระดับชั้น|ชั้นปี|ห้อง)\s*[:：]?\s*/, "").trim();
+          const nextVal = row.getCell(colNumber + 1).value?.toString().trim();
+          
+          if (!levelName) {
+            levelName = splitVal || cleanVal || nextVal || "";
+          }
+        }
+      });
+      if (departmentName && levelName) break;
+    }
+
+    // Fallback if not found by keyword: Row 1 is usually Department, Row 2 is Level/Room
+    if (!departmentName) {
+      const row1Val = worksheet.getRow(1).getCell(1).value?.toString().trim();
+      if (row1Val && !row1Val.includes("รหัส")) departmentName = row1Val;
+    }
+    if (!levelName) {
+      const row2Val = worksheet.getRow(2).getCell(1).value?.toString().trim();
+      if (row2Val && !row2Val.includes("รหัส")) levelName = row2Val;
+    }
 
     const subjects: any[] = [];
     let importedCount = 0;
 
-    // 2. วนลูปดึงข้อมูลรายวิชาและชื่อครู
-    // ใช้ for...of แทน eachRow เพื่อให้สามารถใช้ await ภายในลูปได้ง่ายขึ้น
-    for (let i = 4; i <= worksheet.rowCount; i++) {
+    // 2. ค้นหาแถวเริ่มต้น (ที่มีคำว่า "รหัส")
+    let startRow = 1;
+    for (let i = 1; i <= 10; i++) {
+        const row = worksheet.getRow(i);
+        const rowVal = row.values.toString();
+        if (rowVal.includes("รหัส") || rowVal.includes("วิชา")) {
+            startRow = i + 1;
+            break;
+        }
+    }
+
+    // 3. วนลูปดึงข้อมูลรายวิชาและชื่อครู
+    for (let i = startRow; i <= worksheet.rowCount; i++) {
       const row = worksheet.getRow(i);
       const code = row.getCell(1).value?.toString().trim(); // Column A
       const name = row.getCell(4).value?.toString().trim(); // Column D
       const teacherName = row.getCell(6).value?.toString().trim(); // Column F: ชื่อครู
 
-      if (code && name) {
+      if (code && name && code !== "รหัส") {
         let teacherId = null;
 
         // ค้นหา Teacher จากชื่อใน Database
-        if (teacherName) {
-          const teacher = await teacherRepository.getTeacherByName(teacherName);
+        if (teacherName && teacherName !== "-") {
+          const parts = teacherName.replace(/^(อ\.|ครู|อาจารย์|นาย|นาง|นางสาว)\s*/, '').trim().split(/\s+/);
+          const firstName = parts[0];
+          const lastName = parts.slice(1).join(' ') || '-';
+          const teacher = await teacherRepository.getTeacherByName(firstName, lastName);
           if (teacher) {
-            teacherId = teacher.id; // เก็บ ID ของครูไว้
-          } else {
-            console.warn(`ไม่พบข้อมูลครูชื่อ: ${teacherName} ในระบบ`);
-            // คุณอาจจะเลือกข้าม หรือสร้างครูใหม่ที่นี่ก็ได้
+            teacherId = teacher.id;
           }
         }
 
         subjects.push({
           subject_code: code,
           subject_name: name,
-          department: departmentName,
-          level: levelName,
-          teacher_id: teacherId, // เชื่อมโยง ID ครู
+          teacher_id: teacherId,
         });
       }
     }
 
-    // 3. บันทึกลงฐานข้อมูล
+    // 4. บันทึกลงฐานข้อมูล
     for (const item of subjects) {
-      // เช็คว่ามีวิชานี้คู่กับครูคนนี้ในระดับชั้นนี้อยู่แล้วหรือยัง (ป้องกันข้อมูลซ้ำ)
-      const exists = await subjectRepository.checkDuplicate(
-        item.subject_code,
-        item.teacher_id,
-        item.level,
-      );
+      const exists = await subjectRepository.checkDuplicate(item.subject_code);
 
       if (!exists) {
         await subjectRepository.createSubject(item);
@@ -112,6 +152,11 @@ export namespace SubjectService {
       }
     }
 
-    return { total: subjects.length, imported: importedCount };
+    return { 
+        total: subjects.length, 
+        imported: importedCount, 
+        department: departmentName, 
+        level: levelName 
+    };
   };
 }

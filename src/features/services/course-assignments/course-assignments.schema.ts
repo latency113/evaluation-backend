@@ -23,6 +23,10 @@ export const courseAssignmentSchema = z.object({
             id: z.number(),
             level_name: z.string(),
         }).nullable().optional(),
+        department: z.object({
+            id: z.number(),
+            dept_name: z.string(),
+        }).nullable().optional(),
     }).nullable().optional(),
 });
 

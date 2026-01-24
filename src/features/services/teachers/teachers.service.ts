@@ -3,10 +3,10 @@ import { UpdateTeacherInput, CreateTeacherInput, teacherSchema } from "./teacher
 import ExcelJS from 'exceljs';
 
 export namespace TeacherService {
-    export const getAllTeachers = async (page: number = 1, limit: number = 10) => {
+    export const getAllTeachers = async (page: number = 1, limit: number = 10, searchTerm?: string) => {
         const [teachers, total] = await Promise.all([
-            teacherRepository.getAllTeachers(page, limit),
-            teacherRepository.countTeachers()
+            teacherRepository.getAllTeachers(page, limit, searchTerm),
+            teacherRepository.countTeachers(searchTerm)
         ]);
 
         return {
@@ -50,10 +50,15 @@ export namespace TeacherService {
 
         worksheet.eachRow((row, rowNumber) => {
             if (rowNumber > 1) { // Skip header
-                const firstName = row.getCell(1).value?.toString().trim();
-                const lastName = row.getCell(2).value?.toString().trim();
+                let firstName = row.getCell(1).value?.toString().trim();
+                let lastName = row.getCell(2).value?.toString().trim() || "-";
 
-                if (firstName && lastName) {
+                if (firstName) {
+                    // Strip prefixes
+                    const prefixRegex = /^(อ\.|ครู|อาจารย์|นาย|นาง|นางสาว)\s*/;
+                    firstName = firstName.replace(prefixRegex, '').trim();
+                    lastName = lastName.replace(prefixRegex, '').trim();
+                    
                     teachers.push({
                         first_name: firstName,
                         last_name: lastName

@@ -13,6 +13,9 @@ export const classroomSchema = z.object({
             dept_name: z.string(),
         }).nullable().optional(),
     }).nullable().optional(),
+    _count: z.object({
+        students: z.number()
+    }).optional()
 });
 
 export const CreateClassroomSchema = classroomSchema.omit({ id: true, level: true });

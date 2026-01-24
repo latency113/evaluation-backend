@@ -35,6 +35,7 @@ model Department {
   id        Int     @id @default(autoincrement()) @map("dept_id")
   dept_name String  @db.VarChar(100)
   levels    Level[]
+  classrooms Classroom[]
 
   @@map("Departments")
 }
@@ -54,6 +55,8 @@ model Classroom {
   room_name   String             @db.VarChar(20)
   level_id    Int?
   level       Level?             @relation(fields: [level_id], references: [id], onDelete: Cascade)
+  dept_id     Int?
+  department  Department?        @relation(fields: [dept_id], references: [id], onDelete: Cascade)
   students    Student[]
   assignments CourseAssignment[]
 

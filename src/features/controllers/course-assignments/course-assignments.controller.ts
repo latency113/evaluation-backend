@@ -76,7 +76,10 @@ export namespace CourseAssignmentController {
         if (!req.file) {
             return res.status(400).json({ message: "Please upload an Excel file" });
         }
-        const result = await CourseAssignmentService.importFromExcel(req.file.buffer);
+        
+        const term = (req.body.term || req.query.term) as string;
+        
+        const result = await CourseAssignmentService.importFromExcel(req.file.buffer, term);
         
         let message = `สำเร็จ! นำเข้าใหม่ ${result.imported} รายการ (ข้ามรายการซ้ำ ${result.skipped})`;
         

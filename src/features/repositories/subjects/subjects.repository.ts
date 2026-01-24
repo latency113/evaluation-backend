@@ -72,4 +72,11 @@ export namespace subjectRepository {
             }
         });
     }
+
+    export const checkDuplicate = async (code: string) => {
+        const exists = await prisma.subject.findUnique({
+            where: { subject_code: code }
+        });
+        return !!exists;
+    }
 }
