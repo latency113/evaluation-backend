@@ -83,12 +83,28 @@ export namespace TeacherController {
       res
         .status(200)
         .json({ message: "Teacher updated successfully", data: teacher });
-    } catch (error: any) {
-      next(error);
-    }
-  };
-
-  export const deleteTeacherHandler = async (req: Request, res: Response, next: NextFunction) => {
+        } catch (error: any) {
+            next(error);
+        }
+      };
+    
+      export const importTeachersHandler = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: "Please upload an Excel file" });
+            }
+            const result = await TeacherService.importFromExcel(req.file.buffer);
+            res.status(200).json({ 
+                message: `Successfully processed ${result.total} teachers. Imported ${result.imported} new items.`, 
+                data: result 
+            });
+        } catch (error: any) {
+            next(error);
+        }
+      };
+    
+      export const deleteTeacherHandler = async (req: Request, res: Response, next: NextFunction) => {
+    
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {

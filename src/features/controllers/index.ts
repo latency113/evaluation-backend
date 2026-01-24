@@ -51,6 +51,7 @@ router.delete("/classrooms/:id", ClassroomController.deleteClassroomHandler);
 
 // Teacher routes
 router.get("/teachers", TeacherController.getAllTeachersHandler);
+router.post("/teachers/import", upload.single('file'), TeacherController.importTeachersHandler);
 router.get("/teachers/search", TeacherController.getTeacherByNameHandler);
 router.get("/teachers/:id", TeacherController.getTeacherByIdHandler);
 router.post("/teachers", TeacherController.createTeacherHandler);
@@ -59,6 +60,7 @@ router.delete("/teachers/:id", TeacherController.deleteTeacherHandler);
 
 // Subject routes
 router.get("/subjects", SubjectController.getAllSubjectsHandler);
+router.post("/subjects/import", upload.single('file'), SubjectController.importSubjectsHandler);
 router.get("/subjects/:id", SubjectController.getSubjectByIdHandler);
 router.post("/subjects", SubjectController.createSubjectHandler);
 router.put("/subjects/:id", SubjectController.updateSubjectHandler);
@@ -66,6 +68,7 @@ router.delete("/subjects/:id", SubjectController.deleteSubjectHandler);
 
 // Course Assignment routes
 router.get("/course-assignments", CourseAssignmentController.getAllAssignmentsHandler);
+router.post("/course-assignments/import", upload.single('file'), CourseAssignmentController.importAssignmentsHandler);
 router.get("/course-assignments/:id", CourseAssignmentController.getAssignmentByIdHandler);
 router.post("/course-assignments", CourseAssignmentController.createAssignmentHandler);
 router.put("/course-assignments/:id", CourseAssignmentController.updateAssignmentHandler);

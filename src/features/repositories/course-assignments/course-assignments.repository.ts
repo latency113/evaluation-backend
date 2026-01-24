@@ -75,11 +75,42 @@ export namespace courseAssignmentRepository {
         });
     }
 
-    export const deleteAssignment = async (id: number) => {
-        return await prisma.courseAssignment.delete({
-            where: {
-                id: id
-            }
-        });
+        export const deleteAssignment = async (id: number) => {
+
+            return await prisma.courseAssignment.delete({
+
+                where: {
+
+                    id: id
+
+                }
+
+            });
+
+        }
+
+    
+
+        export const findExisting = async (subjectId: number, teacherId: number, classroomId: number, term: string) => {
+
+            return await prisma.courseAssignment.findFirst({
+
+                where: {
+
+                    subject_id: subjectId,
+
+                    teacher_id: teacherId,
+
+                    classroom_id: classroomId,
+
+                    term: term
+
+                }
+
+            });
+
+        }
+
     }
-}
+
+    

@@ -3,33 +3,44 @@ import { SubjectService } from "@/features/services/subjects/subjects.service.js
 import { Request, Response } from "express";
 
 export namespace SubjectController {
-  export const getAllSubjectsHandler = async (req: Request, res: Response) => {
-    try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-
-      const result = await SubjectService.getAllSubjects(page, limit);
-      res
-        .status(200)
-        .json({ 
-          message: "Subjects retrieved successfully", 
-          data: result.subjects,
-          meta: {
-            total: result.total,
-            page: result.page,
-            limit: result.limit,
-            totalPages: result.totalPages
+    export const getAllSubjectsHandler = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const search = req.query.search as string;
+  
+        const result = await SubjectService.getAllSubjects(page, limit, search);
+        res
+          .status(200)
+          .json({ 
+            message: "Subjects retrieved successfully", 
+            data: result.subjects,
+            meta: {
+              total: result.total,
+              page: result.page,
+              limit: result.limit,
+              totalPages: result.totalPages
+            }
+          });
+      } catch (error: any) {
+        next(error);
+      }
+    };
+  
+    export const importSubjectsHandler = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+          if (!req.file) {
+              return res.status(400).json({ message: "Please upload an Excel file" });
           }
-        });
-    } catch (error: any) {
-      console.error("Error retrieving subjects:", error);
-      res.status(500).json({ 
-          message: "Error retrieving subjects", 
-          error: error instanceof Error ? { message: error.message } : error 
-      });
-    }
-  };
-
+          const result = await SubjectService.importFromExcel(req.file.buffer);
+          res.status(200).json({ 
+              message: `Successfully processed ${result.total} subjects. Imported ${result.imported} new items.`, 
+              data: result 
+          });
+      } catch (error: any) {
+          next(error);
+      }
+    };
   export const getSubjectByIdHandler = async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);

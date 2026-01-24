@@ -1,14 +1,15 @@
 import { CreateCourseAssignmentSchema, UpdateCourseAssignmentSchema } from "@/features/services/course-assignments/course-assignments.schema.js";
 import { CourseAssignmentService } from "@/features/services/course-assignments/course-assignments.service.js";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export namespace CourseAssignmentController {
-  export const getAllAssignmentsHandler = async (req: Request, res: Response) => {
+  export const getAllAssignmentsHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string;
 
-      const result = await CourseAssignmentService.getAllAssignments(page, limit);
+      const result = await CourseAssignmentService.getAllAssignments(page, limit, search);
       res
         .status(200)
         .json({ 
@@ -22,15 +23,11 @@ export namespace CourseAssignmentController {
           }
         });
     } catch (error: any) {
-      console.error("Error retrieving course assignments:", error);
-      res.status(500).json({ 
-          message: "Error retrieving course assignments", 
-          error: error instanceof Error ? { message: error.message } : error 
-      });
+      next(error);
     }
   };
 
-  export const getAssignmentByIdHandler = async (req: Request, res: Response) => {
+  export const getAssignmentByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = parseInt(req.params.id);
         if (isNaN(id)) {
@@ -42,15 +39,11 @@ export namespace CourseAssignmentController {
         }
         res.status(200).json({ message: "Course assignment retrieved successfully", data: assignment });
     } catch (error: any) {
-        console.error("Error retrieving course assignment:", error);
-        res.status(500).json({ 
-            message: "Error retrieving course assignment", 
-            error: error instanceof Error ? { message: error.message } : error 
-        });
+        next(error);
     }
   };
 
-  export const createAssignmentHandler = async (req: Request, res: Response) => {
+  export const createAssignmentHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsedData = CreateCourseAssignmentSchema.parse(req.body);
       const assignment = await CourseAssignmentService.createAssignment(parsedData);
@@ -58,18 +51,11 @@ export namespace CourseAssignmentController {
         .status(201)
         .json({ message: "Course assignment created successfully", data: assignment });
     } catch (error: any) {
-      if (error) {
-        return res.status(400).json({ message: "Validation error", errors: error });
-      }
-      console.error("Error creating course assignment:", error);
-      res.status(500).json({ 
-          message: "Error creating course assignment", 
-          error: error instanceof Error ? { message: error.message } : error 
-      });
+      next(error);
     }
   };
 
-  export const updateAssignmentHandler = async (req: Request, res: Response) => {
+  export const updateAssignmentHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -81,18 +67,33 @@ export namespace CourseAssignmentController {
         .status(200)
         .json({ message: "Course assignment updated successfully", data: assignment });
     } catch (error: any) {
-      if (error) {
-        return res.status(400).json({ message: "Validation error", errors: error });
-      }
-      console.error("Error updating course assignment:", error);
-      res.status(500).json({ 
-          message: "Error updating course assignment", 
-          error: error instanceof Error ? { message: error.message } : error 
-      });
+      next(error);
     }
   };
 
-  export const deleteAssignmentHandler = async (req: Request, res: Response) => {
+  export const importAssignmentsHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: "Please upload an Excel file" });
+        }
+        const result = await CourseAssignmentService.importFromExcel(req.file.buffer);
+        
+        let message = `สำเร็จ! นำเข้าใหม่ ${result.imported} รายการ (ข้ามรายการซ้ำ ${result.skipped})`;
+        
+        if (result.classroomNotFound > 0) {
+            message += `\n❌ ไม่พบชื่อห้องเรียนในระบบ ${result.classroomNotFound} รายการ: ${result.missingRooms.join(', ')}`;
+        }
+
+        res.status(200).json({ 
+            message: message,
+            data: result 
+        });
+    } catch (error: any) {
+        next(error);
+    }
+  };
+
+  export const deleteAssignmentHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -103,11 +104,7 @@ export namespace CourseAssignmentController {
         .status(200)
         .json({ message: "Course assignment deleted successfully", data: assignment });
     } catch (error: any) {
-      console.error("Error deleting course assignment:", error);
-      res.status(500).json({ 
-          message: "Error deleting course assignment", 
-          error: error instanceof Error ? { message: error.message } : error 
-      });
+      next(error);
     }
   };
 }
