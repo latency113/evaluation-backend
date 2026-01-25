@@ -1,6 +1,6 @@
 import { CreateSubjectSchema, UpdateSubjectSchema } from "@/features/services/subjects/subjects.schema.js";
 import { SubjectService } from "@/features/services/subjects/subjects.service.js";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export namespace SubjectController {
     export const getAllSubjectsHandler = async (req: Request, res: Response, next: NextFunction) => {

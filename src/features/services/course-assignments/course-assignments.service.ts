@@ -235,7 +235,7 @@ export namespace CourseAssignmentService {
 
                 // 2. Fallback to DB search
                 if (!teacher) {
-                    teacher = await teacherRepository.getTeacherByName(firstName, lastName);
+                    teacher = await teacherRepository.getTeacherByName(firstName, lastName) ?? undefined;
                 }
 
                 if (!teacher) {
