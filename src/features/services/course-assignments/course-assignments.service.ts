@@ -8,10 +8,10 @@ import prisma from "@/providers/database/database.provider.js";
 import ExcelJS from 'exceljs';
 
 export namespace CourseAssignmentService {
-    export const getAllAssignments = async (page: number = 1, limit: number = 10, searchTerm?: string) => {
+    export const getAllAssignments = async (page: number = 1, limit: number = 10, searchTerm?: string, deptId?: number, classroomId?: number) => {
         const [assignments, total] = await Promise.all([
-            courseAssignmentRepository.getAllAssignments(page, limit, searchTerm),
-            courseAssignmentRepository.countAssignments(searchTerm)
+            courseAssignmentRepository.getAllAssignments(page, limit, searchTerm, deptId, classroomId),
+            courseAssignmentRepository.countAssignments(searchTerm, deptId, classroomId)
         ]);
 
         return {
@@ -60,7 +60,7 @@ export namespace CourseAssignmentService {
             let globalRoomName = "";
             let departmentName = "";
             let globalTerm = overrideTerm || "";
-            const roomRegex = /((ปวช|ปวส)\.?\s?\d+(\/\d+)?)|(\d+\/\d+(\s?(ปวช|ปวส))?)/i;
+            const roomRegex = /((ปวช|ปวส)\.?\s?\d+(\/\d+)?(\.\d+)?)|(\d+\/\d+(\s?(ปวช|ปวส)(\.\d+)?)?)/i;
 
             // Search in sheet name first
             const sheetNameMatch = worksheet.name.match(roomRegex);
@@ -201,10 +201,34 @@ export namespace CourseAssignmentService {
 
                 let classroomId: number | null = null;
                 if (targetRoomName) {
+                    const isPWS = /ปวส/i.test(targetRoomName);
+                    const isPWC = /ปวช/i.test(targetRoomName);
+                    const roomNumberMatch = targetRoomName.match(/\d+\/\d+/);
+                    const roomNumber = roomNumberMatch ? roomNumberMatch[0] : null;
+
                     let classroom = await prisma.classroom.findFirst({
                         where: {
-                            OR: [{ room_name: targetRoomName }, { room_name: { contains: targetRoomName.replace(/(ปวช|ปวส|\.)/g, '').trim() } }],
-                            dept_id: departmentId
+                            dept_id: departmentId,
+                            OR: [
+                                { room_name: targetRoomName },
+                                {
+                                    AND: [
+                                        roomNumber ? { room_name: { contains: roomNumber } } : {},
+                                        isPWS ? { 
+                                            OR: [
+                                                { room_name: { contains: "ปวส" } },
+                                                { level: { level_name: { contains: "ปวส" } } }
+                                            ]
+                                        } : {},
+                                        isPWC ? { 
+                                            OR: [
+                                                { room_name: { contains: "ปวช" } },
+                                                { level: { level_name: { contains: "ปวช" } } }
+                                            ]
+                                        } : {}
+                                    ].filter(cond => Object.keys(cond).length > 0)
+                                }
+                            ]
                         }
                     });
 

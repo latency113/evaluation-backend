@@ -1,10 +1,12 @@
 import prisma from "@/providers/database/database.provider.js";
 
 export namespace courseAssignmentRepository {
-    export const getAllAssignments = async (page: number = 1, limit: number = 10, searchTerm?: string) => {
+    export const getAllAssignments = async (page: number = 1, limit: number = 10, searchTerm?: string, deptId?: number, classroomId?: number) => {
         const skip = (page - 1) * limit;
-        const where = searchTerm ? {
-            OR: [
+        const where: any = {};
+
+        if (searchTerm) {
+            where.OR = [
                 { teacher: { first_name: { contains: searchTerm } } },
                 { teacher: { last_name: { contains: searchTerm } } },
                 { subject: { subject_name: { contains: searchTerm } } },
@@ -12,8 +14,21 @@ export namespace courseAssignmentRepository {
                 { classroom: { room_name: { contains: searchTerm } } },
                 { classroom: { level: { level_name: { contains: searchTerm } } } },
                 { classroom: { department: { dept_name: { contains: searchTerm } } } }
-            ]
-        } : {};
+            ];
+        }
+
+        if (deptId) {
+            where.classroom = {
+                OR: [
+                    { dept_id: deptId },
+                    { level: { dept_id: deptId } }
+                ]
+            };
+        }
+
+        if (classroomId) {
+            where.classroom_id = classroomId;
+        }
 
         return await prisma.courseAssignment.findMany({
             where,
@@ -33,9 +48,11 @@ export namespace courseAssignmentRepository {
         });
     }
 
-    export const countAssignments = async (searchTerm?: string) => {
-        const where = searchTerm ? {
-            OR: [
+    export const countAssignments = async (searchTerm?: string, deptId?: number, classroomId?: number) => {
+        const where: any = {};
+
+        if (searchTerm) {
+            where.OR = [
                 { teacher: { first_name: { contains: searchTerm } } },
                 { teacher: { last_name: { contains: searchTerm } } },
                 { subject: { subject_name: { contains: searchTerm } } },
@@ -43,8 +60,22 @@ export namespace courseAssignmentRepository {
                 { classroom: { room_name: { contains: searchTerm } } },
                 { classroom: { level: { level_name: { contains: searchTerm } } } },
                 { classroom: { department: { dept_name: { contains: searchTerm } } } }
-            ]
-        } : {};
+            ];
+        }
+
+        if (deptId) {
+            where.classroom = {
+                OR: [
+                    { dept_id: deptId },
+                    { level: { dept_id: deptId } }
+                ]
+            };
+        }
+
+        if (classroomId) {
+            where.classroom_id = classroomId;
+        }
+
         return await prisma.courseAssignment.count({ where });
     }
 
