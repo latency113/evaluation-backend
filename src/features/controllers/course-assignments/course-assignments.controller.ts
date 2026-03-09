@@ -14,8 +14,8 @@ export namespace CourseAssignmentController {
       const result = await CourseAssignmentService.getAllAssignments(page, limit, search, deptId, classroomId);
       res
         .status(200)
-        .json({ 
-          message: "Course assignments retrieved successfully", 
+        .json({
+          message: "Course assignments retrieved successfully",
           data: result.assignments,
           meta: {
             total: result.total,
@@ -31,17 +31,17 @@ export namespace CourseAssignmentController {
 
   export const getAssignmentByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
-            return res.status(400).json({ message: "Invalid assignment ID" });
-        }
-        const assignment = await CourseAssignmentService.getAssignmentById(id);
-        if (!assignment) {
-            return res.status(404).json({ message: "Course assignment not found" });
-        }
-        res.status(200).json({ message: "Course assignment retrieved successfully", data: assignment });
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid assignment ID" });
+      }
+      const assignment = await CourseAssignmentService.getAssignmentById(id);
+      if (!assignment) {
+        return res.status(404).json({ message: "Course assignment not found" });
+      }
+      res.status(200).json({ message: "Course assignment retrieved successfully", data: assignment });
     } catch (error: any) {
-        next(error);
+      next(error);
     }
   };
 
@@ -61,7 +61,7 @@ export namespace CourseAssignmentController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-          return res.status(400).json({ message: "Invalid assignment ID" });
+        return res.status(400).json({ message: "Invalid assignment ID" });
       }
       const parsedData = UpdateCourseAssignmentSchema.parse(req.body);
       const assignment = await CourseAssignmentService.updateAssignment(id, parsedData);
@@ -75,26 +75,26 @@ export namespace CourseAssignmentController {
 
   export const importAssignmentsHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Please upload an Excel file" });
-        }
-        
-        const term = (req.body.term || req.query.term) as string;
-        
-        const result = await CourseAssignmentService.importFromExcel(req.file.buffer, term);
-        
-        let message = `สำเร็จ! นำเข้าใหม่ ${result.imported} รายการ (ข้ามรายการซ้ำ ${result.skipped})`;
-        
-        if (result.classroomNotFound > 0) {
-            message += `\n❌ ไม่พบชื่อห้องเรียนในระบบ ${result.classroomNotFound} รายการ: ${result.missingRooms.join(', ')}`;
-        }
+      if (!req.file) {
+        return res.status(400).json({ message: "Please upload an Excel file" });
+      }
 
-        res.status(200).json({ 
-            message: message,
-            data: result 
-        });
+      const term = (req.body.term || req.query.term) as string;
+
+      const result = await CourseAssignmentService.importFromExcel(req.file.buffer, term);
+
+      let message = `สำเร็จ! นำเข้าใหม่ ${result.imported} รายการ (ข้ามรายการซ้ำ ${result.skipped})`;
+
+      if (result.classroomNotFound > 0) {
+        message += `\n❌ ไม่พบชื่อห้องเรียนในระบบ ${result.classroomNotFound} รายการ: ${result.missingRooms.join(', ')}`;
+      }
+
+      res.status(200).json({
+        message: message,
+        data: result
+      });
     } catch (error: any) {
-        next(error);
+      next(error);
     }
   };
 
@@ -102,12 +102,25 @@ export namespace CourseAssignmentController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-          return res.status(400).json({ message: "Invalid assignment ID" });
+        return res.status(400).json({ message: "Invalid assignment ID" });
       }
       const assignment = await CourseAssignmentService.deleteAssignment(id);
       res
         .status(200)
         .json({ message: "Course assignment deleted successfully", data: assignment });
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  export const bulkDeleteAssignmentsHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ message: "Invalid or empty assignment IDs" });
+      }
+      await CourseAssignmentService.bulkDeleteAssignments(ids);
+      res.status(200).json({ message: `Successfully deleted ${ids.length} assignments` });
     } catch (error: any) {
       next(error);
     }

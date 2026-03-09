@@ -2,10 +2,10 @@ import { evaluationRepository } from "../../repositories/evaluations/evaluations
 import { UpdateEvaluationInput, CreateEvaluationInput, evaluationSchema } from "./evaluations.schema.js";
 
 export namespace EvaluationService {
-    export const getAllEvaluations = async (page: number = 1, limit: number = 10) => {
+    export const getAllEvaluations = async (page: number = 1, limit: number = 10, studentId?: number, assignmentId?: number) => {
         const [evaluations, total] = await Promise.all([
-            evaluationRepository.getAllEvaluations(page, limit),
-            evaluationRepository.countEvaluations()
+            evaluationRepository.getAllEvaluations(page, limit, studentId, assignmentId),
+            evaluationRepository.countEvaluations(studentId, assignmentId)
         ]);
 
         return {
@@ -17,8 +17,8 @@ export namespace EvaluationService {
         };
     }
 
-    export const getAllEvaluationsWithoutPagination = async () => {
-        const evaluations = await evaluationRepository.getAllEvaluationsWithoutPagination();
+    export const getAllEvaluationsWithoutPagination = async (studentId?: number, assignmentId?: number) => {
+        const evaluations = await evaluationRepository.getAllEvaluationsWithoutPagination(studentId, assignmentId);
         return evaluations.map(evaluation => evaluationSchema.parse(evaluation));
     }
 

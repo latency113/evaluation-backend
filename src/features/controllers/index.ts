@@ -71,6 +71,7 @@ router.get("/course-assignments", CourseAssignmentController.getAllAssignmentsHa
 router.post("/course-assignments/import", upload.single('file'), CourseAssignmentController.importAssignmentsHandler);
 router.get("/course-assignments/:id", CourseAssignmentController.getAssignmentByIdHandler);
 router.post("/course-assignments", CourseAssignmentController.createAssignmentHandler);
+router.post("/course-assignments/bulk-delete", CourseAssignmentController.bulkDeleteAssignmentsHandler);
 router.put("/course-assignments/:id", CourseAssignmentController.updateAssignmentHandler);
 router.delete("/course-assignments/:id", CourseAssignmentController.deleteAssignmentHandler);
 

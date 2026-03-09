@@ -7,12 +7,14 @@ export namespace EvaluationController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const studentId = req.query.studentId ? parseInt(req.query.studentId as string) : undefined;
+      const assignmentId = req.query.assignmentId ? parseInt(req.query.assignmentId as string) : undefined;
 
-      const result = await EvaluationService.getAllEvaluations(page, limit);
+      const result = await EvaluationService.getAllEvaluations(page, limit, studentId, assignmentId);
       res
         .status(200)
-        .json({ 
-          message: "Evaluations retrieved successfully", 
+        .json({
+          message: "Evaluations retrieved successfully",
           data: result.evaluations,
           meta: {
             total: result.total,
@@ -23,48 +25,50 @@ export namespace EvaluationController {
         });
     } catch (error: any) {
       console.error("Error retrieving evaluations:", error);
-      res.status(500).json({ 
-          message: "Error retrieving evaluations", 
-          error: error instanceof Error ? { message: error.message } : error 
+      res.status(500).json({
+        message: "Error retrieving evaluations",
+        error: error instanceof Error ? { message: error.message } : error
       });
     }
   };
 
   export const getAllEvaluationsWithoutPaginationHandler = async (req: Request, res: Response) => {
     try {
-      const result = await EvaluationService.getAllEvaluationsWithoutPagination();
+      const studentId = req.query.studentId ? parseInt(req.query.studentId as string) : undefined;
+      const assignmentId = req.query.assignmentId ? parseInt(req.query.assignmentId as string) : undefined;
+      const result = await EvaluationService.getAllEvaluationsWithoutPagination(studentId, assignmentId);
       res
         .status(200)
-        .json({ 
-          message: "All evaluations retrieved successfully", 
+        .json({
+          message: "All evaluations retrieved successfully",
           data: result
         });
     } catch (error: any) {
       console.error("Error retrieving all evaluations:", error);
-      res.status(500).json({ 
-          message: "Error retrieving all evaluations", 
-          error: error instanceof Error ? { message: error.message } : error 
+      res.status(500).json({
+        message: "Error retrieving all evaluations",
+        error: error instanceof Error ? { message: error.message } : error
       });
     }
   };
 
   export const getEvaluationByIdHandler = async (req: Request, res: Response) => {
     try {
-        const id = parseInt(req.params.id);
-        if (isNaN(id)) {
-            return res.status(400).json({ message: "Invalid evaluation ID" });
-        }
-        const evaluation = await EvaluationService.getEvaluationById(id);
-        if (!evaluation) {
-            return res.status(404).json({ message: "Evaluation not found" });
-        }
-        res.status(200).json({ message: "Evaluation retrieved successfully", data: evaluation });
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid evaluation ID" });
+      }
+      const evaluation = await EvaluationService.getEvaluationById(id);
+      if (!evaluation) {
+        return res.status(404).json({ message: "Evaluation not found" });
+      }
+      res.status(200).json({ message: "Evaluation retrieved successfully", data: evaluation });
     } catch (error: any) {
-        console.error("Error retrieving evaluation:", error);
-        res.status(500).json({ 
-            message: "Error retrieving evaluation", 
-            error: error instanceof Error ? { message: error.message } : error 
-        });
+      console.error("Error retrieving evaluation:", error);
+      res.status(500).json({
+        message: "Error retrieving evaluation",
+        error: error instanceof Error ? { message: error.message } : error
+      });
     }
   };
 
@@ -80,9 +84,9 @@ export namespace EvaluationController {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error creating evaluation:", error);
-      res.status(500).json({ 
-          message: "Error creating evaluation", 
-          error: error instanceof Error ? { message: error.message } : error 
+      res.status(500).json({
+        message: "Error creating evaluation",
+        error: error instanceof Error ? { message: error.message } : error
       });
     }
   };
@@ -91,7 +95,7 @@ export namespace EvaluationController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-          return res.status(400).json({ message: "Invalid evaluation ID" });
+        return res.status(400).json({ message: "Invalid evaluation ID" });
       }
       const parsedData = UpdateEvaluationSchema.parse(req.body);
       const evaluation = await EvaluationService.updateEvaluation(id, parsedData);
@@ -103,9 +107,9 @@ export namespace EvaluationController {
         return res.status(400).json({ message: "Validation error", errors: error });
       }
       console.error("Error updating evaluation:", error);
-      res.status(500).json({ 
-          message: "Error updating evaluation", 
-          error: error instanceof Error ? { message: error.message } : error 
+      res.status(500).json({
+        message: "Error updating evaluation",
+        error: error instanceof Error ? { message: error.message } : error
       });
     }
   };
@@ -114,7 +118,7 @@ export namespace EvaluationController {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
-          return res.status(400).json({ message: "Invalid evaluation ID" });
+        return res.status(400).json({ message: "Invalid evaluation ID" });
       }
       const evaluation = await EvaluationService.deleteEvaluation(id);
       res
@@ -122,9 +126,9 @@ export namespace EvaluationController {
         .json({ message: "Evaluation deleted successfully", data: evaluation });
     } catch (error: any) {
       console.error("Error deleting evaluation:", error);
-      res.status(500).json({ 
-          message: "Error deleting evaluation", 
-          error: error instanceof Error ? { message: error.message } : error 
+      res.status(500).json({
+        message: "Error deleting evaluation",
+        error: error instanceof Error ? { message: error.message } : error
       });
     }
   };

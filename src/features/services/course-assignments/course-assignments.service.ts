@@ -44,6 +44,10 @@ export namespace CourseAssignmentService {
         return courseAssignmentSchema.parse(deletedAssignment);
     }
 
+    export const bulkDeleteAssignments = async (ids: number[]) => {
+        return await courseAssignmentRepository.deleteAssignments(ids);
+    }
+
     export const importFromExcel = async (buffer: Buffer, overrideTerm?: string) => {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(buffer as any);
@@ -71,7 +75,7 @@ export namespace CourseAssignmentService {
                 const row = worksheet.getRow(i);
                 row.eachCell((cell, colNumber) => {
                     const val = cell.value?.toString() || "";
-                    
+
                     if (val.includes("แผนกวิชา") || val.includes("แผนก") || val.includes("สาขาวิชา") || val.includes("สาขา")) {
                         const splitVal = val.split(/[:：]/)[1]?.trim();
                         const cleanVal = val.replace(/^(แผนกวิชา|แผนก|สาขาวิชา|สาขา)\s*[:：]?\s*/, "").trim();
@@ -83,10 +87,10 @@ export namespace CourseAssignmentService {
                     if (roomMatch && !globalRoomName) {
                         globalRoomName = roomMatch[0];
                     } else if (val.includes("ห้อง") || val.includes("ชั้นเรียน")) {
-                         const splitVal = val.split(/[:：]/)[1]?.trim();
-                         const cleanVal = val.replace(/^(ห้อง|ชั้นเรียน)\s*[:：]?\s*/, "").trim();
-                         const nextVal = row.getCell(colNumber + 1).value?.toString().trim();
-                         if (!globalRoomName) globalRoomName = splitVal || cleanVal || nextVal || "";
+                        const splitVal = val.split(/[:：]/)[1]?.trim();
+                        const cleanVal = val.replace(/^(ห้อง|ชั้นเรียน)\s*[:：]?\s*/, "").trim();
+                        const nextVal = row.getCell(colNumber + 1).value?.toString().trim();
+                        if (!globalRoomName) globalRoomName = splitVal || cleanVal || nextVal || "";
                     }
 
                     if (!globalTerm && (val.includes("ภาคเรียน") || val.includes("เทอม"))) {
@@ -177,10 +181,10 @@ export namespace CourseAssignmentService {
                     const nameParts = teacherFullName.replace(/^(อ\.|ครู|อาจารย์|นาย|นาง|นางสาว)\s*/, '').trim().split(/\s+/);
                     const firstName = nameParts[0].trim();
                     const lastName = nameParts.slice(1).join(' ').trim() || '-';
-                    
+
                     let teacher = allTeachers.find(t => {
-                        return cleanName(t.first_name) === firstName && 
-                               (lastName === '-' || cleanName(t.last_name) === '-' || cleanName(t.last_name) === cleanName(lastName));
+                        return cleanName(t.first_name) === firstName &&
+                            (lastName === '-' || cleanName(t.last_name) === '-' || cleanName(t.last_name) === cleanName(lastName));
                     });
 
                     if (!teacher) teacher = await teacherRepository.getTeacherByName(firstName, lastName) ?? undefined;
@@ -214,13 +218,13 @@ export namespace CourseAssignmentService {
                                 {
                                     AND: [
                                         roomNumber ? { room_name: { contains: roomNumber } } : {},
-                                        isPWS ? { 
+                                        isPWS ? {
                                             OR: [
                                                 { room_name: { contains: "ปวส" } },
                                                 { level: { level_name: { contains: "ปวส" } } }
                                             ]
                                         } : {},
-                                        isPWC ? { 
+                                        isPWC ? {
                                             OR: [
                                                 { room_name: { contains: "ปวช" } },
                                                 { level: { level_name: { contains: "ปวช" } } }
@@ -239,7 +243,7 @@ export namespace CourseAssignmentService {
                             if (veryClean && veryClean !== targetRoomName) classroom = await classroomRepository.getClassroomByName(veryClean);
                         }
                     }
-                    
+
                     if (classroom) {
                         classroomId = classroom.id;
                         if (departmentId && classroom.dept_id !== departmentId) {
@@ -269,9 +273,9 @@ export namespace CourseAssignmentService {
             }
         }
 
-        return { 
-            total: totalImportedCount + totalSkippedCount + totalClassroomNotFoundCount, 
-            imported: totalImportedCount, 
+        return {
+            total: totalImportedCount + totalSkippedCount + totalClassroomNotFoundCount,
+            imported: totalImportedCount,
             skipped: totalSkippedCount,
             classroomNotFound: totalClassroomNotFoundCount,
             missingRooms: Array.from(missingRooms)

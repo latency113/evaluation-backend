@@ -1,9 +1,14 @@
 import prisma from "@/providers/database/database.provider.js";
 
 export namespace evaluationRepository {
-    export const getAllEvaluations = async (page: number = 1, limit: number = 10) => {
+    export const getAllEvaluations = async (page: number = 1, limit: number = 10, studentId?: number, assignmentId?: number) => {
         const skip = (page - 1) * limit;
+        const where: any = {};
+        if (studentId) where.student_id = studentId;
+        if (assignmentId) where.assignment_id = assignmentId;
+
         return await prisma.evaluation.findMany({
+            where,
             skip,
             take: limit,
             include: {
@@ -37,8 +42,13 @@ export namespace evaluationRepository {
         });
     }
 
-    export const getAllEvaluationsWithoutPagination = async () => {
+    export const getAllEvaluationsWithoutPagination = async (studentId?: number, assignmentId?: number) => {
+        const where: any = {};
+        if (studentId) where.student_id = studentId;
+        if (assignmentId) where.assignment_id = assignmentId;
+
         return await prisma.evaluation.findMany({
+            where,
             include: {
                 assignment: {
                     include: {
@@ -70,8 +80,11 @@ export namespace evaluationRepository {
         });
     }
 
-    export const countEvaluations = async () => {
-        return await prisma.evaluation.count();
+    export const countEvaluations = async (studentId?: number, assignmentId?: number) => {
+        const where: any = {};
+        if (studentId) where.student_id = studentId;
+        if (assignmentId) where.assignment_id = assignmentId;
+        return await prisma.evaluation.count({ where });
     }
 
     export const getEvaluationById = async (id: number) => {
@@ -109,10 +122,10 @@ export namespace evaluationRepository {
         });
     }
 
-    export const createEvaluation = async (data: { 
-        assignment_id?: number | null; 
-        student_id?: number | null; 
-        suggestion?: string | null 
+    export const createEvaluation = async (data: {
+        assignment_id?: number | null;
+        student_id?: number | null;
+        suggestion?: string | null
     }) => {
         return await prisma.evaluation.create({
             data: {
@@ -123,10 +136,10 @@ export namespace evaluationRepository {
         });
     }
 
-    export const updateEvaluation = async (id: number, data: { 
-        assignment_id?: number | null; 
-        student_id?: number | null; 
-        suggestion?: string | null 
+    export const updateEvaluation = async (id: number, data: {
+        assignment_id?: number | null;
+        student_id?: number | null;
+        suggestion?: string | null
     }) => {
         return await prisma.evaluation.update({
             where: {

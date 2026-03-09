@@ -97,11 +97,11 @@ export namespace courseAssignmentRepository {
         });
     }
 
-    export const createAssignment = async (data: { 
-        teacher_id?: number | null; 
-        subject_id?: number | null; 
-        classroom_id?: number | null; 
-        term: string 
+    export const createAssignment = async (data: {
+        teacher_id?: number | null;
+        subject_id?: number | null;
+        classroom_id?: number | null;
+        term: string
     }) => {
         return await prisma.courseAssignment.create({
             data: {
@@ -113,11 +113,11 @@ export namespace courseAssignmentRepository {
         });
     }
 
-    export const updateAssignment = async (id: number, data: { 
-        teacher_id?: number | null; 
-        subject_id?: number | null; 
-        classroom_id?: number | null; 
-        term?: string 
+    export const updateAssignment = async (id: number, data: {
+        teacher_id?: number | null;
+        subject_id?: number | null;
+        classroom_id?: number | null;
+        term?: string
     }) => {
         return await prisma.courseAssignment.update({
             where: {
@@ -132,42 +132,47 @@ export namespace courseAssignmentRepository {
         });
     }
 
-        export const deleteAssignment = async (id: number) => {
+    export const deleteAssignment = async (id: number) => {
 
-            return await prisma.courseAssignment.delete({
+        return await prisma.courseAssignment.delete({
 
-                where: {
+            where: {
 
-                    id: id
+                id: id
 
-                }
+            }
 
-            });
-
-        }
-
-    
-
-        export const findExisting = async (subjectId: number, teacherId: number, classroomId: number, term: string) => {
-
-            return await prisma.courseAssignment.findFirst({
-
-                where: {
-
-                    subject_id: subjectId,
-
-                    teacher_id: teacherId,
-
-                    classroom_id: classroomId,
-
-                    term: term
-
-                }
-
-            });
-
-        }
+        });
 
     }
 
-    
+    export const deleteAssignments = async (ids: number[]) => {
+        return await prisma.courseAssignment.deleteMany({
+            where: {
+                id: { in: ids }
+            }
+        });
+    }
+
+
+    export const findExisting = async (subjectId: number, teacherId: number, classroomId: number, term: string) => {
+
+        return await prisma.courseAssignment.findFirst({
+
+            where: {
+
+                subject_id: subjectId,
+
+                teacher_id: teacherId,
+
+                classroom_id: classroomId,
+
+                term: term
+
+            }
+
+        });
+
+    }
+
+}
