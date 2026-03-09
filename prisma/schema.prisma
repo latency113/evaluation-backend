@@ -52,7 +52,7 @@ model Level {
 
 model Classroom {
   id          Int                @id @default(autoincrement()) @map("classroom_id")
-  room_name   String             @db.VarChar(20)
+  room_name   String             @db.VarChar(50)
   level_id    Int?
   level       Level?             @relation(fields: [level_id], references: [id], onDelete: Cascade)
   dept_id     Int?
@@ -74,7 +74,7 @@ model Teacher {
 
 model Subject {
   id           Int                @id @default(autoincrement()) @map("subject_id")
-  subject_code String             @unique @db.VarChar(10)
+  subject_code String             @unique @db.VarChar(50)
   subject_name String             @db.VarChar(100)
   assignments  CourseAssignment[]
 
@@ -89,7 +89,7 @@ model CourseAssignment {
   subject      Subject?     @relation(fields: [subject_id], references: [id], onDelete: Cascade)
   classroom_id Int?
   classroom    Classroom?   @relation(fields: [classroom_id], references: [id], onDelete: Cascade)
-  term         String       @db.VarChar(10)
+  term         String       @db.VarChar(20)
   evaluations  Evaluation[]
 
   @@map("CourseAssignments")
@@ -97,7 +97,7 @@ model CourseAssignment {
 
 model Student {
   id           Int          @id @default(autoincrement()) @map("student_id")
-  student_code String       @unique @db.VarChar(20)
+  student_code String       @unique @db.VarChar(50)
   first_name   String       @db.VarChar(100)
   last_name    String       @db.VarChar(100)
   classroom_id Int?
